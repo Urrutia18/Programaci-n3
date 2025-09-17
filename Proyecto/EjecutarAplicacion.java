@@ -1,4 +1,5 @@
-public class Main {
+public class EjecutarAplicacion {
+    
     public static void main(String[] args) {
         System.out.println("Iniciando Sistema de Casilleros Amazon...");
         System.out.println("Desarrollado para el manejo de paquetes y casilleros");
@@ -10,3 +11,4 @@ public class Main {
         sistema.mostrarMenu();
     }
 }
+
