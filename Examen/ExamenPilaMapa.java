@@ -7,7 +7,7 @@ public class ExamenPilaMapa {
     // Clase interna para manejar una pila de enteros
     static class PilaEnteros {
         private int[] datos;
-        private int tope; // -1 si está vacía
+        private int tope; 
 
         public PilaEnteros(int capacidad) {
             datos = new int[capacidad];
@@ -41,7 +41,6 @@ public class ExamenPilaMapa {
     /**
      * (50 pts)
      * Verifica si los paréntesis de una cadena están balanceados.
-     * Usa la clase PilaEnteros para almacenar los paréntesis abiertos.
      */
     public static boolean esBalanceado(String s) {
         PilaEnteros pila = new PilaEnteros(s.length());
@@ -50,16 +49,16 @@ public class ExamenPilaMapa {
             char c = s.charAt(i);
 
             if (c == '(') {
-                pila.apilar(1); // Representa un paréntesis abierto
+                pila.apilar(1);
             } else if (c == ')') {
                 if (pila.estaVacia()) {
-                    return false; // Hay un cierre sin apertura
+                    return false; 
                 }
-                pila.desapilar(); // Cierra un paréntesis abierto
+                pila.desapilar(); 
             }
         }
 
-        // Si la pila queda vacía, los paréntesis están balanceados
+        
         return pila.estaVacia();
     }
 
@@ -68,19 +67,20 @@ public class ExamenPilaMapa {
      * Actualiza la calificación si el ID existe y el nuevo valor está entre 0 y 100.
      */
     public static boolean actualizarCalificacion(Map<Integer, Integer> califPorId, int id, int nuevo) {
-        if (nuevo < 0 || nuevo > 100) return false; // Validar rango
-        if (!califPorId.containsKey(id)) return false; // Validar existencia
-        califPorId.put(id, nuevo); // Actualizar calificación
+        if (nuevo < 0 || nuevo > 100) return false; 
+        if (!califPorId.containsKey(id)) return false; 
+        califPorId.put(id, nuevo); 
         return true;
     }
 
-    public static void main(String[] args) {
+      public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
 
+        System.out.println("Ingrese una cadena con paréntesis:");
         String cadena = sc.nextLine();
         System.out.println("Balanceado: " + esBalanceado(cadena));
 
-        Map<Integer, Integer> mapa = new HashMap<Integer , Integer>();
+        Map<Integer, Integer> mapa = new HashMap<>();
         mapa.put(101, 70);
 
         System.out.println("Actualizado: " + actualizarCalificacion(mapa, 101, 95));

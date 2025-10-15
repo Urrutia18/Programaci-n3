@@ -51,20 +51,20 @@ public class ExamenColaMapa {
     public static int balanceConCola(String s) {
         ColaCircularEnteros cola = new ColaCircularEnteros(s.length());
 
-        // Encolamos los valores según los paréntesis
+        
         for (int i = 0; i < s.length(); i++) {
             char c = s.charAt(i);
             if (c == '(') cola.encolar(1);
             else if (c == ')') cola.encolar(-1);
         }
 
-        // Desencolamos y sumamos el resultado
+
         int suma = 0;
         while (!cola.estaVacia()) {
             suma += cola.desencolar();
         }
 
-        return suma; // 0 = balanceado, distinto de 0 = desbalanceado
+        return suma; 
     }
 
     /**
@@ -75,23 +75,26 @@ public class ExamenColaMapa {
         int actual = 0;
 
         if (intentos.containsKey(nombre)) {
-            actual = intentos.get(nombre) + 1; // Incrementar si existe
+            actual = intentos.get(nombre) + 1;
         } else {
-            actual = 1; // Iniciar en 1 si no existe
+            actual = 1; 
         }
 
-        intentos.put(nombre, actual); // Actualizar el mapa
+        intentos.put(nombre, actual); 
         return actual;
     }
 
-    public static void main(String[] args) {
+     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
+
+        System.out.println("Ingrese una cadena con paréntesis:");
         String cadena = sc.nextLine();
         System.out.println("Balance cola: " + balanceConCola(cadena));
 
-        Map<String, Integer> intentos = new HashMap<String , Integer>();
+        Map<String, Integer> intentos = new HashMap<>();
         System.out.println("Intentos (Ana): " + registrarIntento(intentos, "Ana"));
         System.out.println("Intentos (Ana): " + registrarIntento(intentos, "Ana"));
+
 
         sc.close();
     }
