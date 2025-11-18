@@ -169,17 +169,71 @@ public class Main {
         int inicio = 0;     // Cali
         int destino = 11;   // Cartagena
 
+        String[] ciudades = new String[]{
+            "Cali","Popayán","Pasto","Neiva","Ibagué","Armenia","Pereira","Manizales","Medellín","Montería","Sincelejo","Cartagena","Barranquilla","Santa Marta","Bogotá","Villavicencio","Tunja","Bucaramanga","Cúcuta"
+        };
+
         int[] previo = new int[19];
         int[] distancias = Dijkstra.dijkstra(graph, inicio, previo);
 
         List<Integer> ruta = Dijkstra.obtenerRuta(destino, previo);
 
         System.out.println("----- RUTA MÁS CORTA: Cali → Cartagena -----");
-        for (int ciudad : ruta) {
-            System.out.print(ciudad + " ");
-        }
+        if (distancias[destino] == Integer.MAX_VALUE) {
+            System.out.println("No existe ruta desde " + ciudades[inicio] + " hasta " + ciudades[destino] + ".");
+        } else {
+            for (int i = 0; i < ruta.size(); i++) {
+                int ciudad = ruta.get(i);
+                System.out.print(ciudades[ciudad]);
+                if (i < ruta.size() - 1) System.out.print(" -> ");
+            }
+            System.out.println();
 
-        System.out.println("\nDistancia total: " + distancias[destino] + " km");
+            System.out.println("Distancia total: " + distancias[destino] + " km");
+
+            // 1) Mostrar la ruta con índices junto a los nombres
+            System.out.println();
+            System.out.println("----- RUTA (ÍNDICE:NOMBRE) -----");
+            for (int i = 0; i < ruta.size(); i++) {
+                int ciudad = ruta.get(i);
+                System.out.print(ciudad + ":" + ciudades[ciudad]);
+                if (i < ruta.size() - 1) System.out.print(" -> ");
+            }
+            System.out.println();
+
+            // 2) Imprimir distancias por ciudad (asociadas) y ordenadas
+            System.out.println();
+            System.out.println("----- DISTANCIAS POR CIUDAD -----");
+            for (int i = 0; i < distancias.length; i++) {
+                if (distancias[i] == Integer.MAX_VALUE) {
+                    System.out.println(ciudades[i] + ": ∞");
+                } else {
+                    System.out.println(ciudades[i] + ": " + distancias[i] + " km");
+                }
+            }
+
+            System.out.println();
+            System.out.println("----- DISTANCIAS ORDENADAS CON CIUDAD -----");
+            List<int[]> pares = new ArrayList<>();
+            for (int i = 0; i < distancias.length; i++) {
+                pares.add(new int[]{i, distancias[i]});
+            }
+            pares.sort((a, b) -> {
+                int da = a[1];
+                int db = b[1];
+                if (da == Integer.MAX_VALUE && db == Integer.MAX_VALUE) return 0;
+                if (da == Integer.MAX_VALUE) return 1;
+                if (db == Integer.MAX_VALUE) return -1;
+                return Integer.compare(da, db);
+            });
+
+            for (int[] p : pares) {
+                int idx = p[0];
+                int d = p[1];
+                if (d == Integer.MAX_VALUE) continue; // omitimos inaccesibles
+                System.out.println(ciudades[idx] + ": " + d + " km");
+            }
+        }
 
         System.out.println("\n----- DISTANCIAS ORDENADAS (QuickSort) -----");
         int[] distCopy = distancias.clone();
