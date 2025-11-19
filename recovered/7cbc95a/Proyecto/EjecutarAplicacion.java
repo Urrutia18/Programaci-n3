@@ -1,0 +1,14 @@
+public class EjecutarAplicacion {
+    
+    public static void main(String[] args) {
+        System.out.println("Iniciando Sistema de Casilleros Amazon...");
+        System.out.println("Desarrollado para el manejo de paquetes y casilleros");
+        
+        // Crear instancia del sistema de casilleros
+        SistemaCasilleros sistema = new SistemaCasilleros();
+        
+        // Mostrar el menú principal
+        sistema.mostrarMenu();
+    }
+}
+

@@ -1,5 +1,4 @@
 import java.util.*;
-import java.text.Normalizer;
 
 class Edge {
     int destino;
@@ -167,96 +166,20 @@ public class Main {
         graph.addEdge(6, 8, 249);
         graph.addEdge(7, 4, 285);
 
-        // Default inicio/destino
         int inicio = 0;     // Cali
         int destino = 11;   // Cartagena
-
-        String[] ciudades = new String[]{
-            "Cali","Popayán","Pasto","Neiva","Ibagué","Armenia","Pereira","Manizales","Medellín","Montería","Sincelejo","Cartagena","Barranquilla","Santa Marta","Bogotá","Villavicencio","Tunja","Bucaramanga","Cúcuta"
-        };
-
-        // Mapa nombre -> índice (acepta sin/ con acentos, insensible a mayúsculas)
-        Map<String,Integer> nameToIndex = new HashMap<>();
-        for (int i = 0; i < ciudades.length; i++) {
-            String name = ciudades[i];
-            nameToIndex.put(name.toLowerCase(), i);
-            nameToIndex.put(normalize(name).toLowerCase(), i);
-        }
-
-        // Parsear argumentos (si se pasan origen y destino)
-        if (args.length >= 2) {
-            Integer iInicio = parseArgAsIndex(args[0], nameToIndex, ciudades.length);
-            Integer iDestino = parseArgAsIndex(args[1], nameToIndex, ciudades.length);
-            if (iInicio == null || iDestino == null) {
-                System.out.println("Argumentos inválidos. Uso: java -cp Recuperacion Main <origen> <destino>\nDonde <origen>/<destino> pueden ser nombre o índice de ciudad.");
-                return;
-            }
-            inicio = iInicio;
-            destino = iDestino;
-        }
 
         int[] previo = new int[19];
         int[] distancias = Dijkstra.dijkstra(graph, inicio, previo);
 
         List<Integer> ruta = Dijkstra.obtenerRuta(destino, previo);
 
-        System.out.println("----- RUTA MÁS CORTA: " + ciudades[inicio] + " → " + ciudades[destino] + " -----");
-
-        if (distancias[destino] == Integer.MAX_VALUE) {
-            System.out.println("No existe ruta entre " + ciudades[inicio] + " y " + ciudades[destino] + ".");
-        } else {
-            // Mostrar ruta con pesos entre tramos: Cali -(242km)-> Armenia -(50km)-> Pereira ...
-            System.out.print(ciudades[ruta.get(0)]);
-            for (int k = 1; k < ruta.size(); k++) {
-                int u = ruta.get(k-1);
-                int v = ruta.get(k);
-                int peso = getEdgeWeight(graph, u, v);
-                System.out.print(" -(" + peso + "km)-> " + ciudades[v]);
-            }
-            System.out.println();
-
-            // Mostrar índice:nombre
-            System.out.println();
-            System.out.println("----- RUTA (ÍNDICE:NOMBRE) -----");
-            for (int i = 0; i < ruta.size(); i++) {
-                int ci = ruta.get(i);
-                System.out.print(ci + ":" + ciudades[ci]);
-                if (i < ruta.size() - 1) System.out.print(" -> ");
-            }
-            System.out.println();
-
-            System.out.println("\nDistancia total: " + distancias[destino] + " km");
+        System.out.println("----- RUTA MÁS CORTA: Cali → Cartagena -----");
+        for (int ciudad : ruta) {
+            System.out.print(ciudad + " ");
         }
 
-        System.out.println("\n----- DISTANCIAS POR CIUDAD (SIN ORDENAR) -----");
-        for (int i = 0; i < distancias.length; i++) {
-            if (distancias[i] == Integer.MAX_VALUE) {
-                System.out.println(ciudades[i] + ": ∞");
-            } else {
-                System.out.println(ciudades[i] + ": " + distancias[i] + " km");
-            }
-        }
-
-        System.out.println("\n----- DISTANCIAS ORDENADAS CON CIUDAD -----");
-        List<int[]> pares = new ArrayList<>();
-        for (int i = 0; i < distancias.length; i++) {
-            pares.add(new int[]{i, distancias[i]});
-        }
-        pares.sort((a, b) -> {
-            int da = a[1];
-            int db = b[1];
-            if (da == Integer.MAX_VALUE && db == Integer.MAX_VALUE) return 0;
-            if (da == Integer.MAX_VALUE) return 1;
-            if (db == Integer.MAX_VALUE) return -1;
-            return Integer.compare(da, db);
-        });
-
-        for (int[] p : pares) {
-            int idx = p[0];
-            int d = p[1];
-            if (d == Integer.MAX_VALUE) continue;
-            System.out.println(ciudades[idx] + ": " + d + " km");
-        }
+        System.out.println("\nDistancia total: " + distancias[destino] + " km");
 
         System.out.println("\n----- DISTANCIAS ORDENADAS (QuickSort) -----");
         int[] distCopy = distancias.clone();
@@ -269,39 +192,5 @@ public class Main {
         }
 
         System.out.println();
-    }
-
-    private static String normalize(String s) {
-        if (s == null) return null;
-        String n = Normalizer.normalize(s, Normalizer.Form.NFD);
-        return n.replaceAll("\\p{M}", "");
-    }
-
-    private static Integer parseArgAsIndex(String arg, Map<String,Integer> map, int n) {
-        if (arg == null) return null;
-        // intentar como entero
-        try {
-            int idx = Integer.parseInt(arg);
-            if (idx >= 0 && idx < n) return idx;
-            return null;
-        } catch (NumberFormatException ex) {
-            // no es número, intentar por nombre
-        }
-
-        Integer idx = map.get(arg.toLowerCase());
-        if (idx != null) return idx;
-        idx = map.get(normalize(arg).toLowerCase());
-        return idx;
-    }
-
-    private static int getEdgeWeight(Graph graph, int u, int v) {
-        for (Edge e : graph.getAdjList(u)) {
-            if (e.destino == v) return e.peso;
-        }
-        // si no se encuentra en la lista de u, intentar en v (por seguridad)
-        for (Edge e : graph.getAdjList(v)) {
-            if (e.destino == u) return e.peso;
-        }
-        return -1;
     }
 }
